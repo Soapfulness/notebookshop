@@ -1,0 +1,1654 @@
+<!doctype html>
+<html xmlns:th="http://www.thymeleaf.org">
+
+    <head>
+        <meta charset="utf-8">
+        <meta http-equiv="X-UA-Compatible" content="IE=edge">
+        <meta name="description" content="">
+        <meta name="keywords" content=" ">
+        <meta name="viewport" content="width=device-width, initial-scale=1, maximum-scale=1, user-scalable=no">
+        <meta name="format-detection" content="telephone=no">
+        <title>WZ笔记本后台管理</title>
+        <script src="/js/jquery.min.js"></script>
+        <script src="/js/bootstrap.min.js"></script>
+        <script>
+            $(function() {
+                $(".meun-item").click(function() {
+                    $(".meun-item").removeClass("meun-item-active");
+                    $(this).addClass("meun-item-active");
+                    var itmeObj = $(".meun-item").find("img");
+                    itmeObj.each(function() {
+                        var items = $(this).attr("src");
+                        items = items.replace("_grey.png", ".png");
+                        items = items.replace(".png", "_grey.png")
+                        $(this).attr("src", items);
+                    });
+                    var attrObj = $(this).find("img").attr("src");
+                    ;
+                    attrObj = attrObj.replace("_grey.png", ".png");
+                    $(this).find("img").attr("src", attrObj);
+                });
+                $("#topAD").click(function() {
+                    $("#topA").toggleClass(" glyphicon-triangle-right");
+                    $("#topA").toggleClass(" glyphicon-triangle-bottom");
+                });
+                $("#topBD").click(function() {
+                    $("#topB").toggleClass(" glyphicon-triangle-right");
+                    $("#topB").toggleClass(" glyphicon-triangle-bottom");
+                });
+                $("#topCD").click(function() {
+                    $("#topC").toggleClass(" glyphicon-triangle-right");
+                    $("#topC").toggleClass(" glyphicon-triangle-bottom");
+                });
+                $(".toggle-btn").click(function() {
+                    $("#leftMeun").toggleClass("show");
+                    $("#rightContent").toggleClass("pd0px");
+                })
+            })
+        </script>
+        <!--[if lt IE 9]>
+  <script src="/js/html5shiv.min.js"></script>
+  <script src="/js/respond.min.js"></script>
+<![endif]-->
+        <link href="/css/bootstrap.min.css" rel="stylesheet">
+        <link rel="stylesheet" type="text/css" href="/css/common.css" />
+        <link rel="stylesheet" type="text/css" href="/css/slide.css" />
+        <link rel="stylesheet" type="text/css" href="/css/bootstrap.min.css" />
+        <link rel="stylesheet" type="text/css" href="/css/flat-ui.min.css" />
+        <link rel="stylesheet" type="text/css" href="/css/jquery.nouislider.css">
+    </head>
+
+    <body>
+        <div id="wrap">
+            <!-- 左侧菜单栏目块 -->
+            <div class="leftMeun" id="leftMeun">
+                <div id="logoDiv">
+                    <p id="logoP"><img id="logo" alt="左右结构项目" src="images/logo.png"><span>管理平台</span></p>
+                </div>
+                <div id="personInfor">
+                    <p id="userName" th:data-id="${session.manager.managerId}" style="font-weight:bold;" th:text="'管理员 ' + ${session.manager.managerName }">无效th标签<span>,欢迎您</span></p>
+                    <p>密码：<span>******</span></p>
+                    <p>权限：<span id="managerValue" th:text="${session.manager.managerValue }">无效th标签</span><span>级</span></p>
+                    <p>
+                        <a href="/managerLogout">退出登录</a>
+                    </p>
+                </div>
+                <div class="meun-title">人事管理</div>
+                <div id="showManagerValue" class="meun-item meun-item-active" href="#sour" aria-controls="sour" role="tab" data-toggle="tab"><img src="images/icon_source.png">下级管理员管理</div>
+                <div id="showAllUser" class="meun-item" href="#user" aria-controls="user" role="tab" data-toggle="tab"><img src="images/icon_user_grey.png">用户管理</div>
+                <div class="meun-item" href="#chan" aria-controls="chan" role="tab" data-toggle="tab"><img src="images/icon_change_grey.png">修改密码</div>
+                <div class="meun-title">商品管理</div>
+                <div id="showAllProduct" class="meun-item" href="#scho" aria-controls="scho" role="tab" data-toggle="tab"><img src="images/icon_card_grey.png">商品管理</div>
+            </div>
+            <!-- 右侧具体内容栏目 -->
+            <div id="rightContent">
+                <a class="toggle-btn" id="nimei">
+                    <i class="glyphicon glyphicon-align-justify"></i>
+                </a>
+                <!-- Tab panes -->
+                <div class="tab-content">
+                    <!-- 下级管理员管理模块 -->
+                    <div role="tabpanel" class="tab-pane active" id="sour">
+                        <div class="check-div form-inline">
+                            <button class="btn btn-yellow btn-xs" data-toggle="modal" data-target="#addSource">添加管理员</button>
+                            <div style="float:right; display:inline;">
+	                            <input type="text" class="form-control input-sm" placeholder="输入管理员名称搜索" id="likeManName">
+		                        <button class="btn btn-white btn-xs " id="btn_likeMan">查 询 </button>
+                        	</div>
+                        </div>
+                        <div class="data-div">
+                            <div class="row tableHeader">
+                                <div class="col-lg-1 col-md-1 col-sm-1 col-xs-1 ">
+                                    编号
+                                </div>
+                                <div class="col-lg-4 col-md-4 col-sm-4 col-xs-4">
+                                    名称
+                                </div>
+                                <div class="col-lg-5 col-md-5 col-sm-5 col-xs-5">
+                                    权限级别
+                                </div>
+                                <div class="col-lg-2 col-md-2 col-sm-2 col-xs-2">
+                                    操作
+                                </div>
+                            </div>
+                            <div id="managerValueDiv" class="tablebody">
+                                <div class="row">
+                                    <div class="col-lg-1 col-md-1 col-sm-1 col-xs-1">
+                                        1
+                                    </div>
+                                    <div id="topAD" class="col-lg-4 col-md-4 col-sm-4 col-xs-4" role="button" data-toggle="collapse" data-parent="#accordion" href="#collapseSystem" aria-expanded="true" aria-controls="collapseOne">
+                                        <span id="topA" class="glyphicon"></span> <span>张三</span>
+                                    </div>
+                                    <div class="col-lg-5 col-md-5 col-sm-5 col-xs-5">
+                                        1级管理员
+                                    </div>
+                                    <div class="col-lg-2 col-md-2 col-sm-2 col-xs-2">
+                                        <button class="btn btn-success btn-xs" data-toggle="modal" data-target="#changeSource">修改</button>
+                                        <button class="btn btn-danger btn-xs" data-toggle="modal" data-target="#deleteSource">删除</button>
+                                    </div>
+                                </div>
+
+                                <div class="row">
+                                    <div class="col-lg-1 col-md-1 col-sm-1 col-xs-1">
+                                        2
+                                    </div>
+                                    <div id="topAD" class="col-lg-4 col-md-4 col-sm-4 col-xs-4" role="button" data-toggle="collapse" data-parent="#accordion" href="#collapseSystem" aria-expanded="true" aria-controls="collapseOne">
+                                        <span id="topA" class="glyphicon"></span> <span>李四</span>
+                                    </div>
+                                    <div class="col-lg-5 col-md-5 col-sm-5 col-xs-5">
+                                        0级管理员
+                                    </div>
+                                    <div class="col-lg-2 col-md-2 col-sm-2 col-xs-2">
+                                        <button class="btn btn-success btn-xs" data-toggle="modal" data-target="#changeSource">修改</button>
+                                        <button class="btn btn-danger btn-xs" data-toggle="modal" data-target="#deleteSource">删除</button>
+                                    </div>
+                                </div>
+                            </div>
+                            
+                        </div>
+                        <!--页码块-->
+                        <footer class="footer">
+                            <ul class="pagination">
+                                <li>
+                                    <select>
+                                        <option>1</option>
+                                    </select>
+                                    页
+                                </li>
+                                <li class="gray">
+                                    共1页
+                                </li>
+                                <li>
+                                    <a href="#"><i class="glyphicon glyphicon-menu-left">
+                                    </i></a>
+                                </li>
+                                <li>
+                                    <a href="#"><i class="glyphicon glyphicon-menu-right">
+                                    </i></a>
+                                </li>
+                            </ul>
+                        </footer>
+                        <!--弹出窗口 添加管理员-->
+                        <div class="modal fade" id="addSource" role="dialog" aria-labelledby="gridSystemModalLabel">
+                            <div class="modal-dialog" role="document">
+                                <div class="modal-content">
+                                    <div class="modal-header">
+                                        <button type="button" class="close" data-dismiss="modal" aria-label="Close"><span aria-hidden="true">&times;</span></button>
+                                        <h4 class="modal-title" id="gridSystemModalLabel">添加管理员</h4>
+                                    </div>
+                                    <div class="modal-body">
+                                        <div class="container-fluid">
+                                            <form class="form-horizontal">
+                                                <div class="form-group ">
+                                                    <label for="sName" class="col-xs-3 control-label">名称：</label>
+                                                    <div class="col-xs-8 ">
+                                                        <input type="text" class="form-control input-sm duiqi" id="addManName" placeholder="" name="managerName">
+                                                    </div>
+                                                </div>
+                                                <div class="form-group">
+                                                    <label for="sLink" class="col-xs-3 control-label">密码：</label>
+                                                    <div class="col-xs-8 ">
+                                                        <input type="text" class="form-control input-sm duiqi" id="addManPassword" placeholder="" name="managerPassword">
+                                                    </div>
+                                                </div>
+                                                <div class="form-group">
+                                                    <label for="sOrd" class="col-xs-3 control-label">权限级别：</label>
+                                                    <div class="col-xs-8">
+                                                        <input type="text" class="form-control input-sm duiqi" id="addManValue" placeholder="" name="managerValue">
+                                                    </div>
+                                                </div>
+                                                <div class="modal-footer">
+			                                        <button type="button" class="btn btn-xs btn-xs btn-white" data-dismiss="modal" id="btn_canAddMan">取 消</button>
+			                                        <button type="button" class="btn btn-xs btn-xs btn-green" id="btn_addMan">保 存</button>
+			                                    </div>
+                                            </form>
+                                        </div>
+                                    </div>
+                                    
+                                </div>
+                                <!-- /.modal-content -->
+                            </div>
+                            <!-- /.modal-dialog -->
+                        </div>
+                        <!-- /.modal -->
+
+                        <!--修改管理员弹出窗口-->
+                        <div class="modal fade" id="changeSource" role="dialog" aria-labelledby="gridSystemModalLabel">
+                            <div class="modal-dialog" role="document">
+                                <div class="modal-content">
+                                    <div class="modal-header">
+                                        <button type="button" class="close" data-dismiss="modal" aria-label="Close"><span aria-hidden="true">&times;</span></button>
+                                        <h4 class="modal-title" id="gridSystemModalLabel">修改下级</h4>
+                                    </div>
+                                    <div class="modal-body">
+                                        <div class="container-fluid">
+                                            <form id="updateForm" action="" method="post" class="form-horizontal">
+                                            	<div style="display:none;" class="form-group ">
+                                                    <label for="manId" class="col-xs-3 control-label">管理员id：</label>
+                                                    <div class="col-xs-8 ">
+                                                        <input type="hidden" class="form-control input-sm duiqi" id="manId" placeholder="" name="">
+                                                    </div>
+                                                </div>
+                                                <div class="form-group ">
+                                                    <label for="sName" class="col-xs-3 control-label">名称：</label>
+                                                    <div class="col-xs-8 ">
+                                                        <input type="text" class="form-control input-sm duiqi" id="sName" placeholder="" name="">
+                                                    </div>
+                                                </div>
+                                                <div class="form-group">
+                                                    <label for="sLink" class="col-xs-3 control-label">权限级别：</label>
+                                                    <div class="col-xs-8 ">
+                                                        <input type="text" class="form-control input-sm duiqi" id="sLink" placeholder="" name="">
+                                                    </div>
+                                                </div>
+                                                <div class="modal-footer">
+			                                        <button type="button" class="btn btn-xs btn-white" data-dismiss="modal" id="btn_canUpdMan">取 消</button>
+			                                        <button type="button" class="btn btn-xs btn-green" id="btn_updMan">确 认</button>
+			                                    </div>
+                                            </form>
+                                        </div>
+                                    </div>
+                                    
+                                </div>
+                                <!-- /.modal-content -->
+                            </div>
+                            <!-- /.modal-dialog -->
+                        </div>
+                        <!-- /.modal -->
+                        <!--弹出删除管理员警告窗口-->
+                        <div class="modal fade" id="deleteSource" role="dialog" aria-labelledby="gridSystemModalLabel">
+                            <div class="modal-dialog" role="document">
+                                <div class="modal-content">
+                                    <div class="modal-header">
+                                        <button type="button" class="close" data-dismiss="modal" aria-label="Close"><span aria-hidden="true">&times;</span></button>
+                                        <h4 class="modal-title" id="gridSystemModalLabel">提示</h4>
+                                    </div>
+                                    <div class="modal-body">
+                                        <div class="container-fluid">
+                                            确定要删除该管理员？删除后不可恢复！
+                                        </div>
+                                    </div>
+                                    <div class="modal-footer">
+                                        <form id="deleteForm" action="" method="post">
+                                        	<button type="button" class="btn btn-xs btn-white" data-dismiss="modal"  id="btn_canDelMan">取 消</button>
+                                        	<button type="button" class="btn btn-xs btn-danger"  id="btn_delMan">删 除</button>
+                                        </form>
+                                    </div>
+                                </div>
+                                <!-- /.modal-content -->
+                            </div>
+                            <!-- /.modal-dialog -->
+                        </div>
+                        <!-- /.modal -->
+                    </div>
+                    
+            <!--用户管理模块-->
+            <div role="tabpanel" class="tab-pane" id="user">
+                <div class="check-div form-inline">
+                    <div class="col-xs-3">
+                        <button class="btn btn-yellow btn-xs" data-toggle="modal" data-target="#addUser">添加用户 </button>
+                    </div>
+                    <div class="col-xs-4">
+                        <input type="text" class="form-control input-sm" placeholder="输入用户名称搜索" id="likeUserName">
+                        <button class="btn btn-white btn-xs " id="btn_likeUser">查 询 </button>
+                    </div>
+                    <div class="col-lg-3 col-lg-offset-2 col-xs-4" style=" padding-right: 40px;text-align: right;">
+                        <label for="paixu">排序:&nbsp;</label>
+                        <select class=" form-control">
+                            <option>用户名</option>
+                            <option>用户性别</option>
+                        </select>
+                    </div>
+                </div>
+                <div class="data-div">
+                    <div class="row tableHeader">
+                        <div class="col-xs-2 ">
+                            用户名
+                        </div>
+                        <div class="col-xs-2">
+                            用户密码
+                        </div>
+                        <div class="col-xs-2">
+                            用户性别
+                        </div>
+                        <div class="col-xs-2">
+                            电话
+                        </div>
+                        <div class="col-xs-2">
+                            邮箱
+                        </div>
+                        <div class="col-xs-2">
+                            操作
+                        </div>
+                    </div>
+                    <div id="managerUserDiv" class="tablebody">
+
+                        <div class="row">
+                            <div class="col-xs-2 ">
+                                张三
+                            </div>
+                            <div class="col-xs-2">
+                                123
+                            </div>
+                            <div class="col-xs-2">
+                                男
+                            </div>
+                            <div class="col-xs-2">
+                                13688889999
+                            </div>
+                            <div class="col-xs-2">
+                               张三@qq.com
+                            </div>
+                            <div class="col-xs-2">
+                                <button class="btn btn-success btn-xs" data-toggle="modal" data-target="#reviseUser">修改</button>
+                                <button class="btn btn-danger btn-xs" data-toggle="modal" data-target="#deleteUser">删除</button>
+                            </div>
+                        </div>
+
+                    </div>
+
+                </div>
+                <!--页码块-->
+                <footer class="footer">
+                    <ul class="pagination">
+                        <li>
+                            <select>
+                                <option>1</option>
+                            </select>
+                            页
+                        </li>
+                        <li class="gray">
+                            共1页
+                        </li>
+                        <li>
+                            <a href="#"><i class="glyphicon glyphicon-menu-left">
+                            </i></a>
+                        </li>
+                        <li>
+                            <a href="#"><i class="glyphicon glyphicon-menu-right">
+                            </i></a>
+                        </li>
+                    </ul>
+                </footer>
+
+                <!--弹出添加用户窗口-->
+                <div class="modal fade" id="addUser" role="dialog" aria-labelledby="gridSystemModalLabel">
+                    <div class="modal-dialog" role="document">
+                        <div class="modal-content">
+                            <div class="modal-header">
+                                <button type="button" class="close" data-dismiss="modal" aria-label="Close"><span aria-hidden="true">&times;</span></button>
+                                <h4 class="modal-title" id="gridSystemModalLabel">添加用户</h4>
+                            </div>
+                            <div class="modal-body">
+                                <div class="container-fluid">
+                                    <form class="form-horizontal">
+                                        <div class="form-group ">
+                                            <label for="sName" class="col-xs-3 control-label">用户姓名：</label>
+                                            <div class="col-xs-8 ">
+                                                <input type="text" class="form-control input-sm duiqi" id="addUserName" placeholder="">
+                                            </div>
+                                        </div>
+                                        <div class="form-group">
+                                            <label for="sLink" class="col-xs-3 control-label" >用户密码：</label>
+                                            <div class="col-xs-8 ">
+                                                <input type="text" class="form-control input-sm duiqi" id="addUserPassword" placeholder="">
+                                            </div>
+                                        </div>
+                                        <div class="form-group">
+                                            <label for="sOrd" class="col-xs-3 control-label">电子邮箱：</label>
+                                            <div class="col-xs-8">
+                                                <input type="text" class="form-control input-sm duiqi" id="addUserEmail" placeholder="">
+                                            </div>
+                                        </div>
+                                        <div class="form-group">
+                                            <label for="sKnot" class="col-xs-3 control-label">电话：</label>
+                                            <div class="col-xs-8">
+                                                <input type="text" class="form-control input-sm duiqi" id="addUserTel" placeholder="">
+                                            </div>
+                                        </div>
+                                        <div class="form-group">
+                                            <label for="sKnot" class="col-xs-3 control-label">性别：</label>
+                                            <div class="col-xs-8">
+                                                <select class=" form-control select-duiqi" id="addUserGender">
+                                                    <option value="男">男</option>
+                                                    <option value="女">女</option>
+                                                </select>
+                                            </div>
+                                        </div>
+                                        
+                                    </form>
+                                </div>
+                            </div>
+                            <div class="modal-footer">
+                                <button type="button" class="btn btn-xs btn-white" data-dismiss="modal" id="btn_canAddUser">取 消</button>
+                                <button type="button" class="btn btn-xs btn-green" id="btn_addUser">保 存</button>
+                            </div>
+                        </div>
+                        <!-- /.modal-content -->
+                    </div>
+                    <!-- /.modal-dialog -->
+                </div>
+                <!-- /.modal -->
+
+                <!--弹出修改用户窗口-->
+                <div class="modal fade" id="reviseUser" role="dialog" aria-labelledby="gridSystemModalLabel">
+                    <div class="modal-dialog" role="document">
+                        <div class="modal-content">
+                            <div class="modal-header">
+                                <button type="button" class="close" data-dismiss="modal" aria-label="Close"><span aria-hidden="true">&times;</span></button>
+                                <h4 class="modal-title" id="gridSystemModalLabel">修改用户</h4>
+                            </div>
+                            <div class="modal-body">
+                                <div class="container-fluid">
+                                    <form class="form-horizontal" action="" id="userupdateForm" method="post">
+                                     <div style="display:none;" class="form-group ">
+                                            <label for="uName" class="col-xs-3 control-label">用户ID：</label>
+                                            <div class="col-xs-8 ">
+                                                <input type="hidden" class="form-control input-sm duiqi" id="updUserId" placeholder="" name="userName">
+                                            </div>
+                                        </div>
+                                        <div class="form-group ">
+                                            <label for="uName" class="col-xs-3 control-label">用户名：</label>
+                                            <div class="col-xs-8 ">
+                                                <input type="text" class="form-control input-sm duiqi" id="updUserName" placeholder="" name="userName">
+                                            </div>
+                                        </div>
+                                        <div class="form-group">
+                                            <label for="uLink" class="col-xs-3 control-label">用户密码：</label>
+                                            <div class="col-xs-8 ">
+                                                <input type="text" class="form-control input-sm duiqi" id="updUserPassword" placeholder="" name="userPassword">
+                                            </div>
+                                        </div>
+                                        <div class="form-group">
+                                            <label for="uGender" class="col-xs-3 control-label">性别：</label>
+                                            <div class="col-xs-8">
+                                                <input type="text" class="form-control input-sm duiqi" id="updUserGender" placeholder="" name="userGender">
+                                            </div>
+                                        </div>
+                                        <div class="form-group">
+                                            <label for="uPhone" class="col-xs-3 control-label">电话：</label>
+                                            <div class="col-xs-8">
+                                                <input type="text" class="form-control input-sm duiqi" id="updUserTel" placeholder="" name="userTelephone">
+                                            </div>
+                                        </div>
+                                        <div class="form-group">
+                                            <label for="uEmail" class="col-xs-3 control-label">邮箱：</label>
+                                            <div class="col-xs-8">
+                                                <input type="text" class="form-control input-sm duiqi" id="updUserEmail" placeholder="" name="userEmail">
+                                            </div>
+                                        </div>
+                                        <div class="modal-footer">
+			                                <button type="button" class="btn btn-xs btn-white" data-dismiss="modal" id="btn_canUpdUser">取 消</button>
+			                                <button type="button" class="btn btn-xs btn-green" id="btn_updUser">保 存</button>
+			                            </div>
+                                    </form>
+                                </div>
+                            </div>
+                        </div>
+                        <!-- /.modal-content -->
+                    </div>
+                    <!-- /.modal-dialog -->
+                </div>
+                <!-- /.modal -->
+
+                <!--弹出删除用户警告窗口-->
+                <div class="modal fade" id="deleteUser" role="dialog" aria-labelledby="gridSystemModalLabel">
+                    <div class="modal-dialog" role="document">
+                        <div class="modal-content">
+                            <div class="modal-header">
+                                <button type="button" class="close" data-dismiss="modal" aria-label="Close"><span aria-hidden="true">&times;</span></button>
+                                <h4 class="modal-title" id="gridSystemModalLabel">提示</h4>
+                            </div>
+                            <div class="modal-body">
+                                <div class="container-fluid">
+                                    确定要删除该用户？删除后不可恢复！
+                                </div>
+                            </div>
+                            <div class="modal-footer">
+	                            <form id="userdeleteForm" method="post" action="">
+	                                <button type="button" class="btn btn-xs btn-white" data-dismiss="modal"  id="btn_canDelUser">取 消</button>
+	                                <button type="button" class="btn  btn-xs btn-danger" id="btn_delUser">删 除</button>
+                                </form>
+                            </div>
+                        </div>
+                        <!-- /.modal-content -->
+                    </div>
+                    <!-- /.modal-dialog -->
+                </div>
+                <!-- /.modal -->
+
+            </div>
+            <!-- 修改密码模块 -->
+            <div role="tabpanel" class="tab-pane" id="chan">
+                <div class="check-div">
+                  <!--   原始密码为 <span th:text="${session.manager.managerPassword }"></span> -->
+                </div>
+                <div style="padding: 50px 0;margin-top: 50px;background-color: #fff; text-align: right;width: 420px;margin: 50px auto;">
+                    <form action="" method="post" class="form-horizontal">
+                        <div class="form-group">
+                            <label for="sKnot" class="col-xs-4 control-label">原密码：</label>
+                            <div class="col-xs-5">
+                                <input disabled="disabled" type="text" class="form-control input-sm duiqi" id="input_oldPas" placeholder="" style="margin-top: 7px;" th:value="${session.manager.managerPassword }">
+                            </div>
+                        </div>
+                        <div class="form-group">
+                            <label for="sKnot" class="col-xs-4 control-label">新密码：</label>
+                            <div class="col-xs-5">
+                                <input type="text" class="form-control input-sm duiqi" id="input_newPas" placeholder="" style="margin-top: 7px;" name="newPass">
+                            </div>
+                        </div>
+                        <div class="form-group">
+                            <label for="sKnot" class="col-xs-4 control-label">重复密码：</label>
+                            <div class="col-xs-5">
+                                <input type="text" class="form-control input-sm duiqi" id="input_repPas" placeholder="" style="margin-top: 7px;">
+                            </div>
+                        </div>
+                        <div class="form-group text-right">
+                            <div class="col-xs-offset-4 col-xs-5" style="margin-left: 169px;">
+                                <button type="reset" class="btn btn-xs btn-white">重 置</button>
+                                <button type="button" class="btn btn-xs btn-green" id="btn_updPas">保 存</button>
+                            </div>
+                        </div>
+                    </form>
+                </div>
+
+            </div>
+            <!--商品管理模块-->
+            <div role="tabpanel" class="tab-pane" id="scho">
+
+                <div class="check-div form-inline">
+                    <div class="col-xs-3">
+                        <button class="btn btn-yellow btn-xs" data-toggle="modal" data-target="#addSchool">添加商品 </button>
+                    </div>
+                    <div class="col-lg-4 col-xs-5">
+                        <input type="text" class=" form-control input-sm " placeholder="输入商品名称搜索" id="likeProName">
+                        <button class="btn btn-white btn-xs " id="btn_likePro">查 询 </button>
+                    </div>
+                    <div class="col-lg-3 col-lg-offset-1 col-xs-3" style="padding-right: 40px;text-align: right;float: right;">
+                        <label for="paixu">排序:&nbsp;</label>
+                        <select class="form-control">
+                            <option>价格</option>
+                            <option>种类</option>
+                        </select>
+                    </div>
+                </div>
+                <div class="data-div">
+                    <div class="row tableHeader">
+                        <div class="col-xs-1 ">
+                            序号
+                        </div>
+                        <div class="col-xs-2 ">
+                            名称
+                        </div>
+                        <div class="col-xs-1">
+                            种类
+                        </div>
+                        <div class="col-xs-1">
+                            颜色
+                        </div>
+                        <div class="col-xs-2">
+                           尺寸/材质
+                        </div>
+                        <div class="col-xs-2">
+                            价格
+                        </div>
+                        <div class="col-xs-2">
+                            操作
+                        </div>
+                    </div>
+                    <div id="AllProductDiv" class="tablebody">
+
+                        <div class="row">
+                            <div class="col-xs-1 ">
+                                1
+                            </div>
+                            <div class="col-xs-2">
+                                富士山下
+                            </div>
+                            <div class="col-xs-1">
+                               封面
+                            </div>
+                            <div class="col-xs-1">
+                                冷色系
+                            </div>
+                            <div class="col-xs-1">
+                               A5
+                            </div>
+                            <div class="col-xs-1"></div>
+                            <div class="col-xs-2">
+                                29.9
+                            </div>
+                            <div class="col-xs-2">
+                                <button class="btn btn-success btn-xs" data-toggle="modal" data-target="#reviseSchool">修改</button>
+                                <button class="btn btn-danger btn-xs" data-toggle="modal" data-target="#deleteSchool">删除</button>
+                            </div>
+                        </div>
+
+                    </div>
+
+                </div>
+                <!--页码块-->
+                <footer class="footer">
+                    <ul class="pagination">
+                        <li>
+                            <select>
+                                <option>1</option>
+                            </select>
+                            页
+                        </li>
+                        <li class="gray">
+                            共1页
+                        </li>
+                        <li>
+                            <i class="glyphicon glyphicon-menu-left">
+                            </i>
+                        </li>
+                        <li>
+                            <i class="glyphicon glyphicon-menu-right">
+                            </i>
+                        </li>
+                    </ul>
+                </footer>
+
+                <!--弹出添加商品窗口-->
+                <div class="modal fade" id="addSchool" role="dialog" aria-labelledby="gridSystemModalLabel">
+                    <div class="modal-dialog" role="document">
+                        <div class="modal-content">
+                            <div class="modal-header">
+                                <button type="button" class="close" data-dismiss="modal" aria-label="Close"><span aria-hidden="true">&times;</span></button>
+                                <h4 class="modal-title" id="gridSystemModalLabel">添加商品</h4>
+                            </div>
+                            <div class="modal-body">
+                                <div class="container-fluid">
+                                    <form class="form-horizontal">
+                                    	<div class="form-group">
+                                            <label for="sKnot" class="col-xs-3 control-label">类别：</label>
+                                            <div class="col-xs-8">
+                                                <select class=" form-control select-duiqi" id="sel_addProType">
+                                                    <option value="cover" id="">封面</option>
+                                                    <option value="style" id="">内页</option>
+                                                </select>
+                                            </div>
+                                        </div>
+                                        <div class="form-group ">
+                                            <label for="sName" class="col-xs-3 control-label">商品名称：</label>
+                                            <div class="col-xs-8 ">
+                                                <input type="text" class="form-control input-sm duiqi" id="addProName" placeholder="" required="required">
+                                            </div>
+                                        </div>
+                                        <div class="form-group ">
+                                            <label for="sName" class="col-xs-3 control-label">商品颜色：</label>
+                                            <div class="col-xs-8 ">
+                                                <input type="text" class="form-control input-sm duiqi" id="addProColor" placeholder="" required="required">
+                                            </div>
+                                        </div>
+                                        <div class="form-group">
+                                            <label for="sLink" class="col-xs-3 control-label">尺寸/材质：</label>
+                                            <div class="col-xs-8 ">
+                                                <input type="text" class="form-control input-sm duiqi" id="addProSize" placeholder="" required="required">
+                                            </div>
+                                        </div>
+                                        <div class="form-group">
+                                            <label for="sOrd" class="col-xs-3 control-label">商品价格：</label>
+                                            <div class="col-xs-8">
+                                                <input type="text" class="form-control input-sm duiqi" id="addProPrice" placeholder="" required="required">
+                                            </div>
+                                        </div>
+                                    </form>
+                                </div>
+                            </div>
+                            <div class="modal-footer">
+                                <button type="button" class="btn btn-xs btn-white" data-dismiss="modal" id="btn_canAddPro">取 消</button>
+                                <button type="button" class="btn btn-xs btn-green" id="btn_addPro">添 加</button>
+                            </div>
+                        </div>
+                        <!-- /.modal-content -->
+                    </div>
+                    <!-- /.modal-dialog -->
+                </div>
+                <!-- /.modal -->
+
+                <!--弹出修改商品窗口-->
+                <div class="modal fade" id="reviseSchool" role="dialog" aria-labelledby="gridSystemModalLabel">
+                    <div class="modal-dialog" role="document">
+                        <div class="modal-content">
+                            <div class="modal-header">
+                                <button type="button" class="close" data-dismiss="modal" aria-label="Close"><span aria-hidden="true">&times;</span></button>
+                                <h4 class="modal-title" id="gridSystemModalLabel">修改商品</h4>
+                            </div>
+                            <div class="modal-body">
+                                <div class="container-fluid">
+                                    <form class="form-horizontal" action="/updateCoverByIdAJAX" id="for_updPro">
+                                        <div style="display: none;" class="form-group ">
+                                            <label for="sName" class="col-xs-3 control-label">商品id：</label>
+                                            <div class="col-xs-8 ">
+                                                <input type="hidden" class="form-control input-sm duiqi" id="proId" placeholder="" name="id">
+                                            </div>
+                                        </div>
+                                        <div class="form-group">
+                                            <label for="sKnot" class="col-xs-3 control-label">商品类别：</label>
+                                            <div class="col-xs-8">
+                                                <select class=" form-control select-duiqi" id="sel_updProType" disabled="disabled">
+                                                    <option value="cover" id="opt_updCov">封面</option>
+                                                    <option value="style" id="opt_updSty">内页</option>
+                                                </select>
+                                            </div>
+                                        </div>
+                                        <div class="form-group ">
+                                            <label for="sName" class="col-xs-3 control-label">商品名称：</label>
+                                            <div class="col-xs-8 ">
+                                                <input type="text" class="form-control input-sm duiqi" id="proName" placeholder="" name="name">
+                                            </div>
+                                        </div>
+                                        <div class="form-group">
+                                            <label for="sLink" class="col-xs-3 control-label">商品颜色：</label>
+                                            <div class="col-xs-8 ">
+                                                <input type="text" class="form-control input-sm duiqi" id="proColor" placeholder="" name="color">
+                                            </div>
+                                        </div>
+                                        <div class="form-group">
+                                            <label for="sOrd" class="col-xs-3 control-label">尺寸/材质：</label>
+                                            <div class="col-xs-8">
+                                                <input type="text" class="form-control input-sm duiqi" id="proSize_Material" placeholder="" name="size_material">
+                                            </div>
+                                        </div>
+                                        <div class="form-group">
+                                            <label for="sOrd" class="col-xs-3 control-label">商品价格：</label>
+                                            <div class="col-xs-8">
+                                                <input type="text" class="form-control input-sm duiqi" id="proPrice" placeholder="" name="price">
+                                            </div>
+                                        </div>
+                                    </form>
+                                </div>
+                            </div>
+                            <div class="modal-footer">
+                                <button type="button" class="btn btn-xs btn-white" data-dismiss="modal" id="btn_canUpdPro">取 消</button>
+                                <button type="button" class="btn btn-xs btn-green" id="btn_updPro">保 存</button>
+                            </div>
+                        </div>
+                        <!-- /.modal-content -->
+                    </div>
+                    <!-- /.modal-dialog -->
+                </div>
+                <!-- /.modal -->
+
+                <!--弹出删除商品警告窗口-->
+                <div class="modal fade" id="deleteSchool" role="dialog" aria-labelledby="gridSystemModalLabel">
+                    <div class="modal-dialog" role="document">
+                        <div class="modal-content">
+                            <div class="modal-header">
+                                <button type="button" class="close" data-dismiss="modal" aria-label="Close"><span aria-hidden="true">&times;</span></button>
+                                <h4 class="modal-title" id="gridSystemModalLabel">提示</h4>
+                            </div>
+                            <div class="modal-body">
+                                <div class="container-fluid">
+                                    确定要删除该商品？删除后不可恢复！
+                                </div>
+                            </div>
+                            <div class="modal-footer">
+                                <button type="button" class="btn btn-xs btn-white" data-dismiss="modal" id="btn_canDelPro">取 消</button>
+                                <button type="button" class="btn btn-xs btn-danger" id="btn_delPro">删 除</button>
+                            </div>
+                        </div>
+                        <!-- /.modal-content -->
+                    </div>
+                    <!-- /.modal-dialog -->
+                </div>
+                <!-- /.modal -->
+            
+            </div>
+            
+        </div>
+    </div>
+</div>
+<!-- 滑块js -->
+<!--	<script type="text/javascript">
+        scale = function(btn, bar, title, unit) {
+                this.btn = document.getElementById(btn);
+                this.bar = document.getElementById(bar);
+                this.title = document.getElementById(title);
+                this.step = this.bar.getElementsByTagName("div")[0];
+                this.unit = unit;
+                this.init();
+        };
+        scale.prototype = {
+                init: function() {
+                        var f = this,
+                                g = document,
+                                b = window,
+                                m = Math;
+                        f.btn.onmousedown = function(e) {
+                                var x = (e || b.event).clientX;
+                                var l = this.offsetLeft;
+//						var max = f.bar.offsetWidth - this.offsetWidth;
+                                var max = f.bar.offsetWidth-20 ;
+                                g.onmousemove = function(e) {
+                                        var thisX = (e || b.event).clientX;
+                                        var to = m.min(max, m.max(-2, l + (thisX - x)));
+                                        f.btn.style.left = to+ 'px';
+                                        f.ondrag(m.round(m.max(0, to / max) * 100), to);
+                                        b.getSelection ? b.getSelection().removeAllRanges() : g.selection.empty();
+                                };
+                                g.onmouseup = new Function('this.onmousemove=null');
+                        };
+                },
+                ondrag: function(pos, x) {
+                        this.step.style.width = Math.max(0, x) +2+ 'px';
+                        this.title.innerHTML = pos / 10 + this.unit + "";
+                }
+        }
+        new scale('btn0', 'bar0', 'title0', "分钟");
+        new scale('btn1', 'bar1', 'title1', "分钟");
+        new scale('btn2', 'bar2', 'title2', "天");
+        new scale('btn3', 'bar3', 'title3', "次");
+</script>
+-->
+<script src="/js/jquery.nouislider.js"></script>
+
+<!-- this page specific inline scripts -->
+<script>
+                                                //min/max slider
+                                                function huadong(my, unit, def, max) {
+                                                    $(my).noUiSlider({
+                                                        range: [0, max],
+                                                        start: [def],
+                                                        handles: 1,
+                                                        connect: 'upper',
+                                                        slide: function() {
+                                                            var val = Math.floor($(this).val());
+                                                            $(this).find(".noUi-handle").text(
+                                                                    val + unit
+                                                                    );
+                                                            console.log($(this).find(".noUi-handle").parent().parent().html());
+                                                        },
+                                                        set: function() {
+                                                            var val = Math.floor($(this).val());
+                                                            $(this).find(".noUi-handle").text(
+                                                                    val + unit
+                                                                    );
+                                                        }
+                                                    });
+                                                    $(my).val(def, true);
+                                                }
+                                                huadong('.slider-minmax1', "分钟", "5", 30);
+                                                huadong('.slider-minmax2', "分钟", "6", 15);
+                                                huadong('.slider-minmax3', "分钟", "10", 60);
+                                                huadong('.slider-minmax4', "次", "2", 10);
+                                                huadong('.slider-minmax5', "天", "3", 7);
+                                                huadong('.slider-minmax6', "天", "8", 10);
+</script>
+<script type="text/javascript">
+	
+	
+		
+		$(function(){
+			
+			function showManagerValue(){
+				var managerValue = $("#managerValue").text();
+				$.ajax({
+					type: "POST",
+					url: "/managerValueDivAJAX",
+					data: managerValue,
+					dataType: "json",
+					contentType: "application/json;charset=UTF-8",
+					success: function(data){
+						var list = eval(data);
+						var content = "";
+						if(null!=list && list.length > 0){
+							$("#managerValueDiv").html("");
+						}else{
+							alert("list is null");
+						}
+						for(var i = 0; i < list.length; i++){
+							content += '<div class="row"><div class="col-lg-1 col-md-1 col-sm-1 col-xs-1">';
+							content += list[i].managerId;
+							content += '</div><div id="topAD" class="col-lg-4 col-md-4 col-sm-4 col-xs-4"'
+							+ 'role="button" data-toggle="collapse" data-parent="#accordion" href="#collapseSystem"'
+							+ 'aria-expanded="true" aria-controls="collapseOne"><span id="topA" class="glyphicon"></span> <span id="spanName-';
+							content += list[i].managerId + '">' + list[i].managerName;
+							content += '</span></div><div class="col-lg-5 col-md-5 col-sm-5 col-xs-5" id="divValue-';
+							content += list[i].managerId + '">' + list[i].managerValue + '级管理员';
+							content += '</div><div class="col-lg-2 col-md-2 col-sm-2 col-xs-2"><button class="'
+							+ 'btn btn-success btn-xs" data-toggle="modal" data-target="#changeSource" id="managerupdate-';
+							content += list[i].managerId;
+							content += '">修改</button><button class="btn btn-danger btn-xs" data-toggle="modal" data-target="#deleteSource" id="managerdelete-';
+							content += list[i].managerId;
+							content += '">删除</button></div></div>';
+							$("#managerValueDiv").append(content);
+							content = '';
+						}
+					},
+					error: function(){
+						alert("init fail");
+					}
+				});
+			};
+				
+				function showAllUser(){
+					$.ajax({
+						type: "POST",
+						url: "/selectAllUserAJAX",
+						success: function(data){
+							var list = eval(data);
+							var content = "";
+							if(null!=list && list.length > 0){
+								$("#managerUserDiv").html("");
+							}else{
+								alert("list is null");
+							}
+							for(var i = 0; i < list.length; i++){
+								content += '<div class="row"><div class="col-xs-2" id="userName-';
+								content += list[i].userId + '">' + list[i].userName;
+								content += '</div><div class="col-xs-2" id="userPassword-';
+								content += list[i].userId + '">' + list[i].userPassword;
+								content += '</div><div class="col-xs-2" id="userGender-';
+								content += list[i].userId + '">' + list[i].userGender;
+								content += '</div><div class="col-xs-2" id="userTelephone-';
+								content += list[i].userId + '">' + list[i].userTelephone;
+								content += '</div><div class="col-xs-2" id="userEmail-';
+								content += list[i].userId + '">' + list[i].userEmail;
+								content += '</div><div class="col-xs-2"><button class="btn btn-success btn-xs"'
+								+ 'data-toggle="modal" data-target="#reviseUser" id="userupdate-';
+								content += list[i].userId + '">修改</button><button class="btn btn-danger btn-xs"'
+								+ 'data-toggle="modal" data-target="#deleteUser" id="userdelete-';
+								content += list[i].userId + '">删除</button></div></div>';
+								$("#managerUserDiv").append(content);
+								content = '';
+							}
+						},
+						error: function(){
+							alert("show user fail");
+						}
+					});
+				};
+				
+				function showAllProduct(){
+					var count = 1;
+					$.ajax({
+						type: "POST",
+						url: "/selectCoverAJAX",
+						success: function(data){
+							var list = eval(data);
+							var content = "";
+							if(null!=list && list.length > 0){
+								$("#AllProductDiv").html("");
+							}else{
+								alert("list is null");
+							}
+							for(var i = 0; i < list.length; i++){
+								content += '<div class="row"><div class="col-xs-1 " id="coverId-' + list[i].coverId + '">';
+								content += count;
+								count++;
+								content += '</div><div class="col-xs-2" id="coverName-' + list[i].coverId + '">';
+								content += list[i].coverName;
+								content += '</div><div class="col-xs-1">封面</div><div class="col-xs-1" id="coverColor-' + list[i].coverId + '">';
+								content += list[i].coverColor;
+								content += '</div><div class="col-xs-1" id="coverSize-' + list[i].coverId + '">';
+								content += list[i].coverSize;
+								content += '</div><div class="col-xs-1"></div><div class="col-xs-2" id="coverPrice-' + list[i].coverId + '">';
+								content += parseFloat(list[i].coverPrice).toFixed(2);
+								content += '</div><div class="col-xs-2"><button class="btn btn-success btn-xs" data-toggle="modal" id="coverupdate-'
+		                            + list[i].coverId + '" data-target="#reviseSchool">修改</button><button class="btn btn-danger btn-xs" id="coverdelete-' 
+		                            + list[i].coverId + '" data-toggle="modal" data-target="#deleteSchool">删除</button></div></div>';
+		                        $("#AllProductDiv").append(content);
+		                        content = '';
+							}
+							$.ajax({
+								type: "POST",
+								url: "/selectStyleAJAX",
+								success: function(data){
+									var list = eval(data);
+									var content = "";
+									if(null!=list && list.length > 0){
+									}else{
+										alert("list is null");
+									}
+									for(var i = 0; i < list.length; i++){
+										content += '<div class="row"><div class="col-xs-1 " id="styleId-' + list[i].styleId + '">';
+										content += count;
+										count++;
+										content += '</div><div class="col-xs-2" id="styleName-' + list[i].styleId + '">';
+										content += list[i].styleName;
+										content += '</div><div class="col-xs-1">内页</div><div class="col-xs-1" id="styleColor-' + list[i].styleId + '">';
+										content += list[i].styleColor;
+										content += '</div><div class="col-xs-1" id="styleMaterial-' + list[i].styleId + '">';
+										content += list[i].styleMaterial;
+										content += '</div><div class="col-xs-1"></div><div class="col-xs-2" id="stylePrice-' + list[i].styleId + '">';
+										content += parseFloat(list[i].stylePrice).toFixed(2);
+										content += '</div><div class="col-xs-2"><button class="btn btn-success btn-xs" data-toggle="modal" id="styleupdate-'
+				                            + list[i].styleId + '" data-target="#reviseSchool">修改</button><button class="btn btn-danger btn-xs" id="styledelete-'
+				                            + list[i].styleId + '" data-toggle="modal" data-target="#deleteSchool">删除</button></div></div>';
+				                        $("#AllProductDiv").append(content);
+				                        content = '';
+									}
+								},
+								error: function(){
+									alert("show style fail");
+								}
+							});
+						},
+						error: function(){
+							alert("show cover fail");
+						}
+					});
+					
+					
+				};
+			
+				function updateCover(){
+					var cover = '{"coverId": "' + $('#proId').val() + '", "coverName": "' + 
+					$('#proName').val() + '", "coverColor": "' + 
+					$('#proColor').val() + '", "coverSize": "' + 
+					$('#proSize_Material').val() + '", "coverImage": "", "coverPrice": "' + 
+					$('#proPrice').val() + '"}';
+					$.ajax({
+						type: "POST",
+						async: false,
+						url: "/updateCoverByIdAJAX",
+						data: cover,
+						contentType: "application/json;charset=UTF-8",
+						success: function(data){
+						},
+						error: function(data){
+							alert(data);
+						}
+					});
+					$('#btn_canUpdPro').click();
+				};
+				
+				function updateStyle(){
+					var style = '{"styleId": "' + $('#proId').val() + '", "styleName": "' + 
+					$('#proName').val() + '", "styleColor": "' + 
+					$('#proColor').val() + '", "styleMaterial": "' + 
+					$('#proSize_Material').val() + '", "styleImage": "", "stylePrice": "' + 
+					$('#proPrice').val() + '"}';
+					$.ajax({
+						type: "POST",
+						async: false,
+						url: "/updateStyleByIdAJAX",
+						data: style,
+						contentType: "application/json;charset=UTF-8",
+						success: function(data){
+						},
+						error: function(data){
+							alert(data);
+						}
+					});
+					$('#btn_canUpdPro').click();
+				};
+				
+				function deleteCover(){
+					var coverid = $('#proId').val();
+					$.ajax({
+						type: "POST",
+						async: false,
+						url: "/deleteCoverByIdAJAX",
+						data: coverid,
+						contentType: "application/json;charset=UTF-8",
+						success: function(data){
+						},
+						error: function(data){
+							alert(data);
+						}
+					});
+					$('#btn_canDelPro').click();
+				};
+				
+				function deleteStyle(){
+					var styleid = $('#proId').val();
+					$.ajax({
+						type: "POST",
+						async: false,
+						url: "/deleteStyleByIdAJAX",
+						data: styleid,
+						contentType: "application/json;charset=UTF-8",
+						success: function(data){
+						},
+						error: function(data){
+							alert(data);
+						}
+					});
+					$('#btn_canDelPro').click();
+				};
+				
+				function addCover(){
+					if(""==$('#addProName').val() || ""==$('#addProColor').val() || ""==$('#addProSize').val() || ""==$('#addProPrice').val()){
+						alert("请填写商品信息！");
+						return;
+					}
+					var cover = '{"coverId": "", "coverName": "' + 
+					$('#addProName').val() + '", "coverColor": "' + 
+					$('#addProColor').val() + '", "coverSize": "' + 
+					$('#addProSize').val() + '", "coverImage": "", "coverPrice": "' + 
+					$('#addProPrice').val() + '"}';
+					$.ajax({
+						type: "POST",
+						async: false,
+						url: "/addCoverAJAX",
+						data: cover,
+						contentType: "application/json;charset=UTF-8",
+						success: function(data){
+						},
+						error: function(data){
+							alert(data);
+						}
+					});
+					$('#addProName').val("");
+					$('#addProColor').val("");
+					$('#addProSize').val("");
+					$('#addProPrice').val("");
+					$('#btn_canAddPro').click();
+				};
+				
+				function addStyle(){
+					if(""==$('#addProName').val() || ""==$('#addProColor').val() || ""==$('#addProSize').val() || ""==$('#addProPrice').val()){
+						alert("请填写商品信息！");
+						return;
+					}
+					var style = '{"styleId": "", "styleName": "' + 
+					$('#addProName').val() + '", "styleColor": "' + 
+					$('#addProColor').val() + '", "styleMaterial": "' + 
+					$('#addProSize').val() + '", "styleImage": "", "stylePrice": "' + 
+					$('#addProPrice').val() + '"}';
+					$.ajax({
+						type: "POST",
+						async: false,
+						url: "/addStyleAJAX",
+						data: style,
+						contentType: "application/json;charset=UTF-8",
+						success: function(data){
+						},
+						error: function(data){
+							alert(data);
+						}
+					});
+					$('#addProName').val("");
+					$('#addProColor').val("");
+					$('#addProSize').val("");
+					$('#addProPrice').val("");
+					$('#btn_canAddPro').click();
+				};
+				
+				function updateManager(){
+					var manager = '{"managerId": "' + $('#manId').val() + '", "managerName": "' + 
+					$('#sName').val() + '", "managerValue": "' + 
+					$('#sLink').val() + '", "managerPassword": ""}';
+					$.ajax({
+						type: "POST",
+						async: false,
+						url: "/updateManagerByIdAJAX",
+						data: manager,
+						contentType: "application/json;charset=UTF-8",
+						success: function(data){
+							
+						},
+						error: function(data){
+							alert(data);
+						}
+					});
+					$('#btn_canUpdMan').click();
+				};
+				
+				function deleteManager(){
+					var managerid = $('#manId').val();
+					$.ajax({
+						type: "POST",
+						async: false,
+						url: "/deleteManagerByIdAJAX",
+						data: managerid,
+						contentType: "application/json;charset=UTF-8",
+						success: function(data){
+						},
+						error: function(data){
+							alert(data);
+						}
+					});
+					$('#btn_canDelMan').click();
+				};
+				
+				function addManager(){
+					if(""==$('#addManName').val() || ""==$('#addManPassword').val() ){
+						alert("请填写管理员信息！");
+						return;
+					}
+					var manager = '{"managerId": "", "managerName": "' + 
+					$('#addManName').val() + '", "managerPassword": "' + 
+					$('#addManPassword').val() + '", "managerValue": "' + 
+					$('#addManValue').val() + '"}';
+					$.ajax({
+						type: "POST",
+						async: false,
+						url: "/addManagerAJAX",
+						data: manager,
+						contentType: "application/json;charset=UTF-8",
+						success: function(data){
+						},
+						error: function(data){
+							alert(data);
+						}
+					});
+					$('#addManName').val("");
+					$('#addManPassword').val("");
+					$('#addManValue').val("");
+					$('#btn_canAddMan').click();
+				};
+				
+				function updateUser(){
+					var user = '{"userId": "' + $('#updUserId').val() + '", "userName": "' + 
+					$('#updUserName').val() + '", "userPassword": "' + 
+					$('#updUserPassword').val() + '", "userGender": "' + 
+					$('#updUserGender').val() + '", "userTelephone": "' + 
+					$('#updUserTel').val() + '", "userEmail": "' + 
+					$('#updUserEmail').val() + '"}';
+					$.ajax({
+						type: "POST",
+						async: false,
+						url: "/updUserByIdAJAX",
+						data: user,
+						contentType: "application/json;charset=UTF-8",
+						success: function(data){
+						},
+						error: function(data){
+							alert(data);
+						}
+					});
+					$('#btn_canUpdUser').click();
+				};
+				
+				function deleteUser(){
+					var userid = $('#updUserId').val();
+					$.ajax({
+						type: "POST",
+						async: false,
+						url: "/delUserByIdAJAX",
+						data: userid,
+						contentType: "application/json;charset=UTF-8",
+						success: function(data){
+						},
+						error: function(data){
+							alert(data);
+						}
+					});
+					$('#btn_canDelUser').click();
+				};
+				
+				function addUser(){
+					if(""==$('#addUserName').val() || ""==$('#addUserPassword').val() || ""==$('#addUserGender').val() || ""==$('#addUserTel').val() ||""==$('#addUserEmail').val()){
+						alert("请填写用户信息！");
+						return;
+					}
+					var user = '{"userId": "", "userName": "' + 
+					$('#addUserName').val() + '", "userPassword": "' + 
+					$('#addUserPassword').val() + '", "userGender": "' + 
+					$('#addUserGender').val() + '", "userTelephone": "' + 
+					$('#addUserTel').val() + '", "userEmail": "' + 
+					$('#addUserEmail').val() + '", "userImage": "", "userAddress": ""}';
+					$.ajax({
+						type: "POST",
+						async: false,
+						url: "/addUserAJAX",
+						data: user,
+						contentType: "application/json;charset=UTF-8",
+						success: function(data){
+						},
+						error: function(data){
+							alert(data);
+						}
+					});
+					$('#addUserName').val("");
+					$('#addUserPassword').val("");
+					$('#addUserGender').val("");
+					$('#addUserEmail').val("");
+					$('#addUserTel').val("");
+					$('#btn_canAddUser').click();
+				};
+				
+				
+					
+					/***************************/
+				
+			showManagerValue();
+			
+			$("#showManagerValue").click(function(){
+				showManagerValue();
+			});
+			$("#showAllUser").click(function(){
+				showAllUser();
+			});
+			$("#showAllProduct").click(function(){
+				showAllProduct();
+			});
+			
+			$("#managerValueDiv").on("click", 'button[id|="managerdelete"]', function(){
+				var managerid = $(this).attr("id");
+				var numid = managerid;
+				numid = numid.replace(/[^0-9]/ig,"");
+				$("input#manId").val(numid);
+			});
+			
+			$("#managerValueDiv").on("click", 'button[id|="managerupdate"]', function(){
+				var id = $(this).attr("id");
+				var numid = id;
+				numid = numid.replace(/[^0-9]/ig,"");
+				var name = $("#spanName-" + numid).text();
+				var value = $("#divValue-" + numid).text();
+				value = value.replace(/[^0-9]/ig,"");
+				$("input#manId").val(numid);			
+				$("input#sName").val(name);
+				$("input#sLink").val(value);
+			});
+			
+			$("#managerUserDiv").on("click", 'button[id|="userdelete"]', function(){
+				var userid = $(this).attr("id");
+				var numid = userid;
+				numid = numid.replace(/[^0-9]/ig,"");
+				$('input#updUserId').val(numid);
+			});
+			
+			$("#managerUserDiv").on("click", 'button[id|="userupdate"]', function(){
+				var id = $(this).attr("id");
+				var numid = id;
+				numid = numid.replace(/[^0-9]/ig,"");
+				var name = $("#userName-" + numid).text();
+				var password = $("#userPassword-" + numid).text();
+				var gender = $("#userGender-" + numid).text();
+				var telephone = $("#userTelephone-" + numid).text();
+				var email = $("#userEmail-" + numid).text();
+				$('input#updUserId').val(numid);
+				$("input#updUserName").val(name);
+				$("input#updUserPassword").val(password);
+				$("input#updUserGender").val(gender);
+				$("input#updUserTel").val(telephone);
+				$("input#updUserEmail").val(email);
+			});
+			
+			$("#AllProductDiv").on("click", 'button[id|="coverdelete"]', function(){
+				var id = $(this).attr("id");
+				var numid = id;
+				numid = numid.replace(/[^0-9]/ig,"");
+				$("input#proId").val(numid);
+				$("select[id='sel_updProType'] option[value='cover']").attr("selected", "selected");
+				$("select[id='sel_updProType'] option[value='style']").removeAttr("selected");
+			});
+			
+			
+			$("#AllProductDiv").on("click", 'button[id|="coverupdate"]', function(){
+				var id = $(this).attr("id");
+				var numid = id;
+				numid = numid.replace(/[^0-9]/ig,"");
+				var name = $("#coverName-" + numid).text();
+				var color = $("#coverColor-" + numid).text();
+				var size = $("#coverSize-" + numid).text();
+				var price = $("#coverPrice-" + numid).text();
+				$("input#proId").val(numid);
+				$("input#proName").val(name);
+				$("input#proColor").val(color);
+				$("input#proSize_Material").val(size);
+				$("input#proPrice").val(price);
+				$("select[id='sel_updProType'] option[value='cover']").attr("selected", "selected");
+				$("select[id='sel_updProType'] option[value='style']").removeAttr("selected");
+			});
+			
+			$("#AllProductDiv").on("click", 'button[id|="styledelete"]', function(){
+				var id = $(this).attr("id");
+				var numid = id;
+				numid = numid.replace(/[^0-9]/ig,"");
+				$("input#proId").val(numid);
+				$("select[id='sel_updProType'] option[value='style']").attr("selected", "selected");
+				$("select[id='sel_updProType'] option[value='cover']").removeAttr("selected");
+			});
+			
+			
+			$("#AllProductDiv").on("click", 'button[id|="styleupdate"]', function(){
+				var id = $(this).attr("id");
+				var numid = id;
+				numid = numid.replace(/[^0-9]/ig,"");
+				var name = $("#styleName-" + numid).text();
+				var color = $("#styleColor-" + numid).text();
+				var material = $("#styleMaterial-" + numid).text();
+				var price = $("#stylePrice-" + numid).text();
+				$("input#proId").val(numid);
+				$("input#proName").val(name);
+				$("input#proColor").val(color);
+				$("input#proSize_Material").val(material);
+				$("input#proPrice").val(price);
+				$("select[id='sel_updProType'] option[value='style']").attr("selected", "selected");
+				$("select[id='sel_updProType'] option[value='cover']").removeAttr("selected");
+			});
+			
+			$("#btn_likeMan").click(function(){
+				var managerName = $("#likeManName").val();
+				if(null==managerName){
+					managerName = "";
+				}
+				
+				$.ajax({
+					type: "POST",
+					url: "/selectManagerByNameAJAX",
+					data: managerName,
+					contentType: "application/json;charset=UTF-8",
+					dataType: "json",
+					success: function(data){
+						var list = eval(data);
+						var content = "";
+						if(null!=list && list.length > 0){
+							$("#managerValueDiv").html("");
+						}else{
+							$("#managerValueDiv").html("<p style=\"text-align:center;\">没有任何查询结果哦~~~</p>");
+						}
+						for(var i = 0; i < list.length; i++){
+							content += '<div class="row"><div class="col-lg-1 col-md-1 col-sm-1 col-xs-1">';
+							content += list[i].managerId;
+							content += '</div><div id="topAD" class="col-lg-4 col-md-4 col-sm-4 col-xs-4"'
+							+ 'role="button" data-toggle="collapse" data-parent="#accordion" href="#collapseSystem"'
+							+ 'aria-expanded="true" aria-controls="collapseOne"><span id="topA" class="glyphicon"></span> <span id="spanName-';
+							content += list[i].managerId + '">' + list[i].managerName;
+							content += '</span></div><div class="col-lg-5 col-md-5 col-sm-5 col-xs-5" id="divValue-';
+							content += list[i].managerId + '">' + list[i].managerValue + '级管理员';
+							content += '</div><div class="col-lg-2 col-md-2 col-sm-2 col-xs-2"><button class="'
+							+ 'btn btn-success btn-xs" data-toggle="modal" data-target="#changeSource" id="update-';
+							content += list[i].managerId;
+							content += '">修改</button><button class="btn btn-danger btn-xs" data-toggle="modal" data-target="#deleteSource" id="delete-';
+							content += list[i].managerId;
+							content += '">删除</button></div></div>';
+							$("#managerValueDiv").append(content);
+							content = '';
+						}
+					},
+					error: function(){
+						alert("没有查到该管理员");
+					}
+				});
+			});
+			
+			$("#btn_likePro").click(function(){
+				var coverName = $("#likeProName").val();
+				if(null==coverName || ""==coverName){
+					showAllProduct();
+					return;
+				}
+				var count = 1;
+				$.ajax({
+					type: "POST",
+					url: "/selectCoverByNameAJAX",
+					data: coverName,
+					contentType: "application/json;charset=UTF-8",
+					dataType: "json",
+					success: function(data){
+						var list = eval(data);
+						var content = "";
+						if(null!=list && list.length > 0){
+							$("#AllProductDiv").html("");
+						}else{
+							$("#AllProductDiv").html("<p style=\"text-align:center;\">没有任何查询结果哦~~~</p>");
+						}
+						for(var i = 0; i < list.length; i++){
+							content += '<div class="row"><div class="col-xs-1 " id="coverId-' + list[i].coverId + '">';
+							content += count;
+							count++;
+							content += '</div><div class="col-xs-2" id="coverName-' + list[i].coverId + '">';
+							content += list[i].coverName;
+							content += '</div><div class="col-xs-1">封面</div><div class="col-xs-1" id="coverColor-' + list[i].coverId + '">';
+							content += list[i].coverColor;
+							content += '</div><div class="col-xs-1" id="coverSize-' + list[i].coverId + '">';
+							content += list[i].coverSize;
+							content += '</div><div class="col-xs-1"></div><div class="col-xs-2" id="coverPrice-' + list[i].coverId + '">';
+							content += parseFloat(list[i].coverPrice).toFixed(2);
+							content += '</div><div class="col-xs-2"><button class="btn btn-success btn-xs" data-toggle="modal" id="coverupdate-'
+	                            + list[i].coverId + '" data-target="#reviseSchool">修改</button><button class="btn btn-danger btn-xs" id="coverdelete-' 
+	                            + list[i].coverId + '" data-toggle="modal" data-target="#deleteSchool">删除</button></div></div>';
+	                        $("#AllProductDiv").append(content);
+	                        content = '';
+						}
+					},
+					error: function(){
+						alert("找不到该商品！");
+					}
+				});
+			});
+			
+			$("#btn_likeUser").click(function(){
+				var userName = $("#likeUserName").val();
+				if(null==userName){
+					userName = "";
+				}
+				$.ajax({
+					type: "POST",
+					url: "/selUserByNameAJAX",
+					data: userName,
+					contentType: "application/json;charset=UTF-8",
+					dataType: "json",
+					success: function(data){
+						var list = eval(data);
+						var content = "";
+						if(null!=list && list.length > 0){
+							$("#managerUserDiv").html("");
+						}else{
+							$("#managerUserDiv").html("<p style=\"text-align:center;\">没有任何查询结果哦~~~</p>");
+						}
+						for(var i = 0; i < list.length; i++){
+							content += '<div class="row"><div class="col-xs-2" id="userName-';
+							content += list[i].userId + '">' + list[i].userName;
+							content += '</div><div class="col-xs-2" id="userPassword-';
+							content += list[i].userId + '">' + list[i].userPassword;
+							content += '</div><div class="col-xs-2" id="userGender-';
+							content += list[i].userId + '">' + list[i].userGender;
+							content += '</div><div class="col-xs-2" id="userTelephone-';
+							content += list[i].userId + '">' + list[i].userTelephone;
+							content += '</div><div class="col-xs-2" id="userEmail-';
+							content += list[i].userId + '">' + list[i].userEmail;
+							content += '</div><div class="col-xs-2"><button class="btn btn-success btn-xs"'
+							+ 'data-toggle="modal" data-target="#reviseUser" id="userupdate-';
+							content += list[i].userId + '">修改</button><button class="btn btn-danger btn-xs"'
+							+ 'data-toggle="modal" data-target="#deleteUser" id="userdelete-';
+							content += list[i].userId + '">删除</button></div></div>';
+							$("#managerUserDiv").append(content);
+							content = '';
+						}
+					},
+					error: function(){
+						alert("");
+					}
+				});
+			});
+			
+			$('#btn_updPro').on('click', function(){
+				if("cover" == $("#sel_updProType").val()){
+					updateCover();
+				}else if("style" == $("#sel_updProType").val()){
+					updateStyle();
+				}else{
+					alert("获取商品类别失败！");
+				}
+				showAllProduct();
+			});
+			
+			$('#btn_delPro').on('click', function(){
+				if("cover" == $("#sel_updProType").val()){
+					deleteCover();
+				}else if("style" == $("#sel_updProType").val()){
+					deleteStyle();
+				}else{
+					alert("获取商品类别失败！");
+				}
+				showAllProduct();
+			});
+			
+			$('#btn_addPro').on('click', function(){
+				if("cover" == $("#sel_addProType").val()){
+					addCover();
+				}else if("style" == $("#sel_addProType").val()){
+					addStyle();
+				}else{
+					alert("获取商品类别失败！");
+				}
+				showAllProduct();
+			});
+			
+			$('#btn_updMan').on('click', function(){
+				updateManager();
+				showManagerValue();
+			});
+			
+			$('#btn_delMan').on('click', function(){
+				deleteManager();
+				showManagerValue();
+			});
+			
+			$('#btn_addMan').on('click', function(){
+				addManager();
+				showManagerValue();
+			});
+			
+			$('#btn_updUser').on('click', function(){
+				updateUser();
+				showAllUser();
+			});
+			
+			$('#btn_delUser').on('click', function(){
+				deleteUser();
+				showAllUser();
+			});
+			
+			$('#btn_addUser').on('click', function(){
+				addUser();
+				showAllUser();
+			});
+			
+			$("#btn_updPas").on('click', function(){
+				var old = $("#input_oldPas").val();
+				var star = $("#input_newPas").val();
+				var rep = $("#input_repPas").val();
+				if(old == star){
+					alert("新密码不能与原密码相同！");
+					return;
+				}else if(star != rep){
+					alert("两次密码输入不一致！");
+					return;
+				}else{
+					var manager = '{"managerId": "' + $("#userName").data("id") 
+						+ '", "managerName": "", "managerPassword": "' + star + '", "managerValue": ""}';
+					$.ajax({
+						type: "POST",
+						async: false,
+						url: "/updatePasswordById",
+						data: manager,
+						dataType: 'json',
+						contentType: "application/json;charset=UTF-8",
+						success: function(data){
+							alert(data.data);
+						},
+						error: function(data){
+							alert(data.data);
+						}
+					});
+				}
+			});
+			
+		});
+		
+		
+</script>
+</body>
+
+</html>
